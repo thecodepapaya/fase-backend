@@ -2,9 +2,7 @@ from django.db import models
 from students.models import StudentData
 
 
-class Registration(models.Model):
-    registration_id = models.AutoField(primary_key=True, unique=True)
-    server_key = models.CharField(max_length=40)
+class BasicData(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     student_data = models.ForeignKey(StudentData, on_delete=models.CASCADE)
 
@@ -33,7 +31,15 @@ class Registration(models.Model):
     local_ip = models.GenericIPAddressField()
 
     class Meta:
-        ordering = ['timestamp']
+        abstract = True
+
+
+class Registration(BasicData):
+    registration_id = models.AutoField(primary_key=True, unique=True)
+    server_key = models.CharField(max_length=40)
+
+    class Meta:
+        ordering = ['-timestamp']
 
     def __str__(self):
         return "Registration ID: "+str(self.registration_id)+"\nStudent: "+str(self.student_data)+'\nDevice: '+str(self.device_id)

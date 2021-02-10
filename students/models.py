@@ -7,4 +7,4 @@ class StudentData(models.Model):
     name = models.CharField(max_length=35)
 
     def __str__(self):
-        return 'Name: '+self.name+'\nEmail: '+self.institute_email+'\nGoogle login ID'+self.google_uid
+        return 'Name: '+self.name+'\nEmail: '+self.institute_email+'\nGoogle login ID: '+self.google_uid
