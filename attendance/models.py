@@ -7,6 +7,7 @@ class Attendance(BasicData):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     attendance_id = models.AutoField(primary_key=True, unique=True)
     server_key = models.CharField(max_length=40)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ['-timestamp']

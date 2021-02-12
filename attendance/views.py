@@ -8,6 +8,7 @@ from rest_framework import status
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from datetime import datetime, timedelta
 
 from .models import Attendance
 from .serializers import AttendanceSerializer
@@ -31,6 +32,13 @@ class attendance_list(APIView):
             # If registration was invalidated or server_key is not correct
             if serializer.validated_data['server_key'] != registration_data.server_key:
                 return Response({'details': 'Your registeration has been invalidated, register again'}, status=status.HTTP_403_FORBIDDEN)
+
+            course = serializer.validated_data['course']
+            attendance = Attendance.objects.filter(course = course, student_data = serializer.validated_data['student_data']).order_by('-timestamp')
+            diff_time = datetime.now() - attendance.timestamp
+            if diff_time<=1:
+                return Response({'details': 'You have already recorded your attendance fo this subject'}, status=status.HTTP_403_FORBIDDEN)
+
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
