@@ -6,7 +6,7 @@ from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from meta.models import MetaData
-from meta.serializers import MetaSerializer
+from meta.serializers import MetaDataSerializer
 from rest_framework import status
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
@@ -27,7 +27,7 @@ class registration_list(APIView):
         if serializer.is_valid():
             meta_data = MetaData.objects.all()[0]
             if serializer.validated_data['app_build_number'] < meta_data.min_app_build:
-                return Response(MetaSerializer(meta_data).data, status=status.HTTP_403_FORBIDDEN)
+                return Response(MetaDataSerializer(meta_data).data, status=status.HTTP_403_FORBIDDEN)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
@@ -58,3 +58,20 @@ class registration_detail(APIView):
         registration = self.get_object(pk)
         registration.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class registration_verification(APIView):
+
+    def post(self, request, format=None):
+        try:
+            email = request.data['institute_email']
+            server_key = request.data['server_key']
+            registration_data = Registration.objects.filter(
+                student_data__institute_email=email)
+            if len(registration_data) == 0:
+                return Response(status=status.HTTP_404_NOT_FOUND)
+            if server_key != registration_data[0].server_key:
+                return Response(status=status.HTTP_403_FORBIDDEN)
+            return Response(status=status.HTTP_200_OK)
+        except Exception:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
