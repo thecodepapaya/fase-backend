@@ -2,7 +2,7 @@ from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from meta.models import MetaData
-from meta.serializers import MetaSerializer
+from meta.serializers import MetaDataSerializer
 from registration.models import Registration
 from rest_framework import status
 from rest_framework.parsers import JSONParser
@@ -27,7 +27,7 @@ class attendance_list(APIView):
             registration_data = Registration.objects.filter(
                 student_data__institute_email=email)[0]
             if serializer.validated_data['app_build_number'] < meta_data.min_app_build:
-                return Response(MetaSerializer(meta_data).data, status=status.HTTP_403_FORBIDDEN)
+                return Response(MetaDataSerializer(meta_data).data, status=status.HTTP_403_FORBIDDEN)
             # If registration was invalidated or server_key is not correct
             if serializer.validated_data['server_key'] != registration_data.server_key:
                 return Response({'details': 'Your registeration has been invalidated, register again'}, status=status.HTTP_403_FORBIDDEN)

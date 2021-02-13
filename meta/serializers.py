@@ -5,7 +5,7 @@ from rest_framework.renderers import JSONRenderer
 from .models import MetaData
 
 
-class MetaSerializer(serializers.ModelSerializer):
+class MetaDataSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MetaData

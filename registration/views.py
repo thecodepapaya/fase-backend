@@ -6,7 +6,7 @@ from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from meta.models import MetaData
-from meta.serializers import MetaSerializer
+from meta.serializers import MetaDataSerializer
 from rest_framework import status
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
@@ -27,7 +27,7 @@ class registration_list(APIView):
         if serializer.is_valid():
             meta_data = MetaData.objects.all()[0]
             if serializer.validated_data['app_build_number'] < meta_data.min_app_build:
-                return Response(MetaSerializer(meta_data).data, status=status.HTTP_403_FORBIDDEN)
+                return Response(MetaDataSerializer(meta_data).data, status=status.HTTP_403_FORBIDDEN)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
