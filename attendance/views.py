@@ -30,7 +30,7 @@ class attendance_list(APIView):
                 return Response(MetaDataSerializer(meta_data).data, status=status.HTTP_403_FORBIDDEN)
             # If registration was invalidated or server_key is not correct
             if serializer.validated_data['server_key'] != registration_data.server_key:
-                return Response({'details': 'Your registeration has been invalidated, register again'}, status=status.HTTP_403_FORBIDDEN)
+                return Response({'detail': 'Your registeration has been invalidated, register again'}, status=status.HTTP_403_FORBIDDEN)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

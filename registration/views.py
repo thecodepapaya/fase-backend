@@ -58,3 +58,20 @@ class registration_detail(APIView):
         registration = self.get_object(pk)
         registration.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class registration_verification(APIView):
+
+    def post(self, request, format=None):
+        try:
+            email = request.data['institute_email']
+            server_key = request.data['server_key']
+            registration_data = Registration.objects.filter(
+                student_data__institute_email=email)
+            if len(registration_data) == 0:
+                return Response(status=status.HTTP_404_NOT_FOUND)
+            if server_key != registration_data[0].server_key:
+                return Response(status=status.HTTP_403_FORBIDDEN)
+            return Response(status=status.HTTP_200_OK)
+        except Exception:
+            return Response(status=status.HTTP_400_BAD_REQUEST)

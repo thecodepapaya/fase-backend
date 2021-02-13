@@ -11,8 +11,8 @@ from .models import MetaData
 from .serializers import MetaDataSerializer
 
 
-class metadata_list(APIView):
+class metadata_latest(APIView):
     def get(self, request, format=None):
-        meta_data = MetaData.objects.all()
-        serializer = MetaDataSerializer(meta_data, many=True)
+        meta_data = MetaData.objects.all()[0]
+        serializer = MetaDataSerializer(meta_data)
         return Response(serializer.data)
