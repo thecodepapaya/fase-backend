@@ -16,3 +16,8 @@ class metadata_latest(APIView):
         meta_data = MetaData.objects.all()[0]
         serializer = MetaDataSerializer(meta_data)
         return Response(serializer.data)
+
+
+class meta_ping(APIView):
+    def get(self, request, format=None):
+        return Response(status=status.HTTP_200_OK)
