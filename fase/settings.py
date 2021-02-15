@@ -30,7 +30,7 @@ ALLOWED_HOSTS = ['*']
 
 SESSION_COOKIE_SECURE = True
 
-CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = False
 
 # Application definition
 
@@ -46,8 +46,6 @@ INSTALLED_APPS = [
     'attendance.apps.AttendanceConfig',
     'course.apps.CourseConfig',
     'students.apps.StudentsConfig',
-    # 'device.apps.DeviceConfig',
-    # 'wifi_info.apps.WifiInfoConfig',
     'rest_framework'
 ]
 
