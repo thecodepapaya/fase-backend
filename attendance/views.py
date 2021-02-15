@@ -2,6 +2,7 @@ from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from meta.models import MetaData
+from course.models import Course
 from meta.serializers import MetaDataSerializer
 from registration.models import Registration
 from rest_framework import status
@@ -31,32 +32,44 @@ class attendance_list(APIView):
             # If registration was invalidated or server_key is not correct
             if serializer.validated_data['server_key'] != registration_data.server_key:
                 return Response({'detail': 'Your registeration has been invalidated, register again'}, status=status.HTTP_403_FORBIDDEN)
+            # Check if the attendance is within the time frame
+            # course = Course.objects.get(course_code=serializer.validated_data['course']['course_code'])
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class attendance_detail(APIView):
-    def get_object(self, pk):
-        try:
-            return Attendance.objects.get(pk=pk)
-        except Attendance.DoesNotExist:
-            raise Http404
+# class attendance_detail(APIView):
+#     def get_object(self, pk):
+#         try:
+#             return Attendance.objects.get(pk=pk)
+#         except Attendance.DoesNotExist:
+#             raise Http404
 
-    def get(self, request, pk, format=None):
-        attendance = self.get_object(pk)
-        serializer = AttendanceSerializer(attendance)
-        return Response(serializer.data)
+#     def get(self, request, pk, format=None):
+#         attendance = self.get_object(pk)
+#         serializer = AttendanceSerializer(attendance)
+#         return Response(serializer.data)
 
-    def put(self, request, pk, format=None):
-        attendance = self.get_object(pk)
-        serializer = AttendanceSerializer(attendance, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#     def put(self, request, pk, format=None):
+#         attendance = self.get_object(pk)
+#         serializer = AttendanceSerializer(attendance, data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, pk, format=None):
-        attendance = self.get_object(pk)
-        attendance.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+#     def delete(self, request, pk, format=None):
+#         attendance = self.get_object(pk)
+#         attendance.delete()
+#         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class my_attendance(APIView):
+    def get(self, request, email, course, format=None):
+        email = email+'@iiitvadodara.ac.in'
+        print(f"email: {email}")
+        print(f"course: {course}")
+        attendances_record = Attendance.objects.filter(
+            student_data__institute_email=email).filter(course__course_code=course)
+        return Response({'count': len(attendances_record)}, status=status.HTTP_200_OK)
