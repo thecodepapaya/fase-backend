@@ -11,6 +11,7 @@ from rest_framework.views import APIView
 
 from .models import Course
 from .serializers import CourseSerializer
+from faculty.models import Faculty
 
 
 class course_list(APIView):
@@ -19,3 +20,28 @@ class course_list(APIView):
         )-timedelta(minutes=30)).filter(start_timestamp__lte=timezone.now())
         serializer = CourseSerializer(course, many=True)
         return Response(serializer.data)
+
+
+class course_detail(APIView):
+    def get_object(self, pk):
+        try:
+            return Course.objects.get(pk=pk)
+        except Course.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, format=None):
+        course = self.get_object(pk)
+        serializer = CourseSerializer(course)
+        return Response(serializer.data)
+
+    def post(self, request, pk, format=None):
+        course = self.get_object(pk)
+        serializer = CourseSerializer(course, data=request.data)
+        if serializer.is_valid():
+            stored_access_token = Faculty.objects.get(
+                institute_email=request.data['instructor'].institute_email).access_token
+            if request.data['access_token'] != stored_access_token:
+                return Response({'detail': 'Invalid access token, try logging out and logging in again'}, status=status.HTTP_401_UNAUTHORIZED)
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

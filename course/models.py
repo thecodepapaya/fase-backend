@@ -22,9 +22,14 @@ class Course(models.Model):
         max_length=6, choices=semester_choice, default='autumn')
     academic_year = models.CharField(
         max_length=9, choices=get_academic_year(), default=get_academic_year()[0])
-    instructor = models.ForeignKey(Faculty, on_delete=models.CASCADE,null=True)
+    instructor = models.ForeignKey(
+        Faculty, on_delete=models.CASCADE, null=True)
     # The timestamp at which the attendance for this course was last started
     start_timestamp = models.DateTimeField()
 
+    class Meta:
+        constraints = [models.UniqueConstraint(
+            fields=['course_code', 'semester', 'academic_year'], name='course_unique_per_sem_per_year')]
+
     def __str__(self):
-        return 'Course Code: '+self.course_code+'\nCourse Name: '+self.course_name
+        return f'Course Code: {self.course_code} \nAcademic year: {self.academic_year} \nSemester: {self.semester}'
