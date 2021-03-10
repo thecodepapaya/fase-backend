@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'attendance.apps.AttendanceConfig',
     'course.apps.CourseConfig',
     'students.apps.StudentsConfig',
+    'faculty.apps.FacultyConfig',
     'rest_framework'
 ]
 
