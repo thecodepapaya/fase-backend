@@ -4,7 +4,8 @@ from rest_framework.urlpatterns import format_suffix_patterns
 
 urlpatterns = [
     path('faculty/', views.faculty_list.as_view()),
-    # path('course/<int:pk>/', views.course_detail.as_view()),
+    # path('faculty/email/', views.faculty_course.as_view()),
+    path('faculty/<email>/', views.faculty_course.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
