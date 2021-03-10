@@ -1,4 +1,4 @@
-from students.models import StudentData  # , LANGUAGE_CHOICES, STYLE_CHOICES
+from students.models import StudentData  
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 
