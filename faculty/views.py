@@ -13,10 +13,10 @@ from .serializers import FacultySerializer
 
 
 class faculty_list(APIView):
-    def get(self, request, format=None):
-        faculty = Faculty.objects.all()
-        serializer = FacultySerializer(faculty, many=True)
-        return Response(serializer.data)
+    # def get(self, request, format=None):
+    #     faculty = Faculty.objects.all()
+    #     serializer = FacultySerializer(faculty, many=True)
+    #     return Response(serializer.data)
 
     def post(self, request, format=None):
         serializer = FacultySerializer(data=request.data)
@@ -30,6 +30,11 @@ class faculty_course(APIView):
     def get(self, request, email, format=None):
         try:
             faculty = Faculty.objects.get(institute_email=email)
+            stored_access_token = faculty.access_token
+            # TODO: Check access token of faculty before sending courses, use query parameters
+            received_access_token = request.GET.get('token', '-')
+            if received_access_token != stored_access_token:
+                return Response({'detail': 'Invalid access token, try logging out and logging in again'}, status=status.HTTP_401_UNAUTHORIZED)
         except Faculty.DoesNotExist:
             return Response({'detail': f'Faculty with email {email} does not exist'}, status=status.HTTP_404_NOT_FOUND)
         courses = Course.objects.filter(instructor=faculty)
