@@ -21,7 +21,6 @@ class CourseSerializer(serializers.ModelSerializer):
         """
         instructor = data.pop('instructor')
         try:
-            data['access_token'] = instructor['access_token']
             data['instructor'] = Faculty.objects.get(
                 institute_email=instructor['institute_email'], google_uid=instructor['google_uid'])
         except Faculty.DoesNotExist:
