@@ -36,11 +36,12 @@ class course_detail(APIView):
 
     def post(self, request, pk, format=None):
         course = self.get_object(pk)
+        received_access_token = request.GET.get('token','-')
         serializer = CourseSerializer(course, data=request.data)
         if serializer.is_valid():
             stored_access_token = Faculty.objects.get(
                 institute_email=request.data['instructor'].institute_email).access_token
-            if request.data['access_token'] != stored_access_token:
+            if received_access_token != stored_access_token:
                 return Response({'detail': 'Invalid access token, try logging out and logging in again'}, status=status.HTTP_401_UNAUTHORIZED)
             serializer.save()
             return Response(serializer.data)

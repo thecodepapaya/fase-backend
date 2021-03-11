@@ -18,6 +18,7 @@ class AttendanceSerializer(serializers.ModelSerializer):
         model = Attendance
         fields = '__all__'
 
+    #TODO: remove get or create with get only
     def to_internal_value(self, data):
         """
             Add foreign key for student data
