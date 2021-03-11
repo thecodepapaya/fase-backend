@@ -1,3 +1,5 @@
+import logging
+
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
@@ -9,6 +11,8 @@ from rest_framework.views import APIView
 from .models import StudentData
 from .serializers import StudentDataSerializer
 
+logger = logging.getLogger(__file__)
+
 
 class students_list(APIView):
     def get(self, request, format=None):
@@ -17,6 +21,7 @@ class students_list(APIView):
         return Response(serializer.data)
 
     def post(self, request, format=None):
+        logger.info(f"POST request body: {request.body}")
         serializer = StudentDataSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()

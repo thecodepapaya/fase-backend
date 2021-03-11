@@ -1,3 +1,4 @@
+import logging
 from datetime import timedelta
 
 from course.models import Course
@@ -16,6 +17,8 @@ from rest_framework.views import APIView
 from .models import Attendance
 from .serializers import AttendanceSerializer
 
+logger = logging.getLogger(__file__)
+
 
 class attendance_list(APIView):
     def get(self, request, format=None):
@@ -24,6 +27,7 @@ class attendance_list(APIView):
         return Response(serializer.data)
 
     def post(self, request, format=None):
+        logger.info(f"POST request body: {request.body}")
         serializer = AttendanceSerializer(data=request.data)
         if serializer.is_valid():
             email = serializer.validated_data['student_data'].institute_email
@@ -31,16 +35,24 @@ class attendance_list(APIView):
             registration_data = Registration.objects.filter(
                 student_data__institute_email=email)[0]
             if serializer.validated_data['app_build_number'] < meta_data.min_app_build:
+                logger.warn(
+                    f"App build number({serializer.validated_data['app_build_number']}) less than allowed build number({meta_data.min_app_build})")
                 return Response(MetaDataSerializer(meta_data).data, status=status.HTTP_403_FORBIDDEN)
             # If registration was invalidated or server_key is not correct
             if serializer.validated_data['server_key'] != registration_data.server_key:
+                logger.warn(
+                    f"Server key mismatch. Received server_key: {serializer.validated_data['server_key']} Stored server_key: {registration_data.server_key}")
                 return Response({'detail': 'Your registeration has been invalidated, register again'}, status=status.HTTP_403_FORBIDDEN)
             # Check if the attendance is within the time frame
             course = Course.objects.get(
                 course_code=serializer.validated_data['course'].course_code)
             if course.start_timestamp > timezone.now():
+                logger.warn(
+                    f"Attempt to mark attendance before attendance window opens. Email: {email} Course: {course}")
                 return Response({'detail': 'Attendance window has not started yet'}, status=status.HTTP_403_FORBIDDEN)
             if (course.start_timestamp + timedelta(minutes=30) <= timezone.now()):
+                logger.warn(
+                    f"Attempt to mark attendance after attendance window closed. Email: {email} Course: {course}")
                 return Response({'detail': 'Time limit to mark attendance expired'}, status=status.HTTP_403_FORBIDDEN)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
