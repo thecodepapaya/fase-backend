@@ -18,6 +18,7 @@ logger = logging.getLogger(__file__)
 
 class faculty_list(APIView):
     def get(self, request, format=None):
+        logger.info(f"GET faculty_list request data: {request.data}")
         faculty = Faculty.objects.all()
         serializer = FacultySerializer(faculty, many=True)
         return Response(serializer.data)
@@ -46,6 +47,7 @@ class faculty_list(APIView):
 
 class faculty_course(APIView):
     def get(self, request, email, format=None):
+        logger.info(f"GET faculty_course request data: {request.data}")
         received_access_token = request.GET.get('token', '-')
         try:
             faculty = Faculty.objects.get(institute_email=email)

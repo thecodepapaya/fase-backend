@@ -19,6 +19,7 @@ logger = logging.getLogger(__file__)
 
 class course_list(APIView):
     def get(self, request, format=None):
+        logger.info(f"GET course_list request data: {request.data}")
         course = Course.objects.filter(start_timestamp__gte=timezone.now(
         )-timedelta(minutes=30)).filter(start_timestamp__lte=timezone.now())
         serializer = CourseSerializer(course, many=True)
@@ -34,12 +35,13 @@ class course_detail(APIView):
             raise Http404
 
     def get(self, request, pk, format=None):
+        logger.info(f"GET course_detail request data: {request.data}")
         course = self.get_object(pk)
         serializer = CourseSerializer(course)
         return Response(serializer.data)
 
     def post(self, request, pk, format=None):
-        logger.info(f"POST request body: {request.data}")
+        logger.info(f"POST course_detail request data: {request.data}")
         course = self.get_object(pk)
         received_access_token = request.GET.get('token', '-')
         serializer = CourseSerializer(course, data=request.data)

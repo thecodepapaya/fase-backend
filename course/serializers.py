@@ -30,4 +30,5 @@ class CourseSerializer(serializers.ModelSerializer):
         except Faculty.DoesNotExist:
             logger.error(f"Could not find instructor with email {instructor['institute_email']} and google uid {instructor['google_uid']} for course {data}")
             raise Http404
+        logger.info(f"Found foreign key for faculty in course {data}")
         return data
