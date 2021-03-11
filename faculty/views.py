@@ -21,9 +21,20 @@ class faculty_list(APIView):
     def post(self, request, format=None):
         serializer = FacultySerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            faculty = Faculty.objects.filter(
+                institute_email=serializer.validated_data['institute_email'])
+            if faculty.exists():
+                new_fac = faculty[0]
+                new_fac.access_token = request.data['access_token']
+                new_fac.name = request.data['name']
+                new_fac.google_uid = request.data['google_uid']
+                new_fac.save()
+                return Response({'access_token': new_fac.access_token}, status=status.HTTP_201_CREATED)
+            else:
+                serializer.save()
+                return Response({'access_token': request.data['access_token']}, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class faculty_course(APIView):
