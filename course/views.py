@@ -39,7 +39,7 @@ class course_detail(APIView):
         return Response(serializer.data)
 
     def post(self, request, pk, format=None):
-        logger.info(f"POST request body: {request.body}")
+        logger.info(f"POST request body: {request.data}")
         course = self.get_object(pk)
         received_access_token = request.GET.get('token', '-')
         serializer = CourseSerializer(course, data=request.data)

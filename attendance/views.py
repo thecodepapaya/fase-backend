@@ -27,7 +27,7 @@ class attendance_list(APIView):
         return Response(serializer.data)
 
     def post(self, request, format=None):
-        logger.info(f"POST request body: {request.body}")
+        logger.info(f"POST request body: {request.data}")
         serializer = AttendanceSerializer(data=request.data)
         if serializer.is_valid():
             email = serializer.validated_data['student_data'].institute_email

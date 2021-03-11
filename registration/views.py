@@ -26,7 +26,7 @@ class registration_list(APIView):
         return Response(serializer.data)
 
     def post(self, request, format=None):
-        logger.info(f"POST request body: {request.body}")
+        logger.info(f"POST request body: {request.data}")
         serializer = RegistrationSerializer(data=request.data)
         if serializer.is_valid():
             meta_data = MetaData.objects.all()[0]
@@ -68,7 +68,7 @@ class registration_detail(APIView):
 class registration_verification(APIView):
 
     def post(self, request, format=None):
-        logger.info(f"POST request body: {request.body}")
+        logger.info(f"POST request body: {request.data}")
         try:
             email = request.data['institute_email']
             server_key = request.data['server_key']
