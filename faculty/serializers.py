@@ -21,5 +21,4 @@ class FacultySerializer(serializers.ModelSerializer):
         random_int = random.randint(0, 1000)
         data['access_token'] = sha256(
             (str(random_int)+str(datetime.now())).encode('utf-8')).hexdigest()
-        logger.info(f"Generated access_token for data {data}")
         return data
