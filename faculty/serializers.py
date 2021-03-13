@@ -15,7 +15,7 @@ logger = logging.getLogger(__file__)
 class FacultySerializer(serializers.ModelSerializer):
     class Meta:
         model = Faculty
-        exclude = ['access_token']
+        exclude = ['access_token','google_uid']
 
     def to_internal_value(self, data):
         random_int = random.randint(0, 1000)
