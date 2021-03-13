@@ -35,7 +35,6 @@ class faculty_list(APIView):
                 new_fac = faculty[0]
                 new_fac.access_token = request.data['access_token']
                 new_fac.name = request.data['name']
-                new_fac.google_uid = request.data['google_uid']
                 new_fac.save()
                 return Response({'access_token': new_fac.access_token}, status=status.HTTP_201_CREATED)
             else:
@@ -79,7 +78,8 @@ class faculty_verify(APIView):
                 f"Cannot find faculty with email {received_institute_email}, registration verification failed")
             return Response({'detail': f'Could\'nt find faculty with email {received_institute_email}'}, status=status.HTTP_404_NOT_FOUND)
         if faculty.google_uid == received_google_uid and faculty.access_token == received_access_token:
-            logger.info(f"Verified OK Registration for faculty {received_institute_email}")
+            logger.info(
+                f"Verified OK Registration for faculty {received_institute_email}")
             return Response(status=status.HTTP_200_OK)
         else:
             logger.warn(
