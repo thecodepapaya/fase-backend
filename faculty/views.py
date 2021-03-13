@@ -24,6 +24,8 @@ class faculty_list(APIView):
             faculty = Faculty.objects.filter(
                 institute_email=serializer.validated_data['institute_email'])
             if faculty.exists():
+                logger.info(
+                    f"Registration for existing faculty {request.data}")
                 new_fac = faculty[0]
                 new_fac.access_token = request.data['access_token']
                 new_fac.name = request.data['name']
@@ -50,3 +52,28 @@ class faculty_course(APIView):
         courses = Course.objects.filter(instructor=faculty)
         serializer = CourseSerializer(courses, many=True)
         return Response(serializer.data)
+
+
+class faculty_verify(APIView):
+    def get(self, request, format=None):
+        # logger.info(f"Verification for faculty_verify")
+        received_access_token = request.GET.get('token', '-')
+        received_google_uid = request.GET.get('uid', '-')
+        received_institute_email = request.GET.get('email', '-')
+        try:
+            faculty = Faculty.objects.get(
+                institute_email=received_institute_email)
+        except Faculty.DoesNotExist:
+            # logger.warn(
+            #     f"Cannot find faculty with email {received_institute_email}, registration verification failed")
+            return Response({'detail': f'Could\'nt find faculty with email {received_institute_email}'}, status=status.HTTP_404_NOT_FOUND)
+        if faculty.google_uid == received_google_uid and faculty.access_token == received_access_token:
+            return Response(status=status.HTTP_200_OK)
+        else:
+            # logger.warn(
+            #     f"Failed faculty verification attempt")
+            # logger.info(
+            #     f"Received Email: {received_institute_email} Google UID: {received_google_uid} Access Token: {received_access_token}")
+            # logger.info(
+            #     f"Stored Email: {faculty.institute_email} Google UID: {faculty.google_uid} Access Token: {faculty.access_token}")
+            return Response({'detail': 'Verification failed. Credentials do not match'}, status=status.HTTP_401_UNAUTHORIZED)
