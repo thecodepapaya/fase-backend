@@ -1,3 +1,4 @@
+import logging
 import random
 from datetime import datetime
 from hashlib import sha256
@@ -7,6 +8,8 @@ from rest_framework.parsers import JSONParser
 from rest_framework.renderers import JSONRenderer
 
 from faculty.models import Faculty
+
+logger = logging.getLogger(__file__)
 
 
 class FacultySerializer(serializers.ModelSerializer):

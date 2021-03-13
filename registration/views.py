@@ -1,4 +1,5 @@
 
+import logging
 from datetime import datetime
 from hashlib import sha1
 
@@ -15,6 +16,8 @@ from rest_framework.views import APIView
 from .models import Registration
 from .serializers import RegistrationSerializer
 
+logger = logging.getLogger(__file__)
+
 
 class registration_list(APIView):
     def get(self, request, format=None):
@@ -23,10 +26,12 @@ class registration_list(APIView):
         return Response(serializer.data)
 
     def post(self, request, format=None):
+        logger.info(f"POST request body: {request.data}")
         serializer = RegistrationSerializer(data=request.data)
         if serializer.is_valid():
             meta_data = MetaData.objects.all()[0]
             if serializer.validated_data['app_build_number'] < meta_data.min_app_build:
+                logger.warn(f"App build number({serializer.validated_data['app_build_number']}) less than allowed build number({meta_data.min_app_build})")
                 return Response(MetaDataSerializer(meta_data).data, status=status.HTTP_403_FORBIDDEN)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -63,6 +68,7 @@ class registration_detail(APIView):
 class registration_verification(APIView):
 
     def post(self, request, format=None):
+        logger.info(f"POST request body: {request.data}")
         try:
             email = request.data['institute_email']
             server_key = request.data['server_key']
@@ -71,6 +77,7 @@ class registration_verification(APIView):
             if len(registration_data) == 0:
                 return Response(status=status.HTTP_404_NOT_FOUND)
             if server_key != registration_data[0].server_key:
+                logger.warn(f"Server key mismatch. Received server_key: {server_key} Stored server_key: {registration_data[0].server_key}")
                 return Response(status=status.HTTP_403_FORBIDDEN)
             return Response(status=status.HTTP_200_OK)
         except Exception:
