@@ -21,7 +21,7 @@ class students_list(APIView):
         return Response(serializer.data)
 
     def post(self, request, format=None):
-        logger.info(f"POST request body: {request.data}")
+        logger.info(f"POST request data: {request.data}")
         serializer = StudentDataSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
