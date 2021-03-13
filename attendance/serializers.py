@@ -18,18 +18,17 @@ class AttendanceSerializer(serializers.ModelSerializer):
         model = Attendance
         fields = '__all__'
 
-    #TODO: remove get or create with get only
     def to_internal_value(self, data):
         """
             Add foreign key for student data
         """
         student = data.pop('student_data')
-        data['student_data'] = StudentData.objects.get_or_create(
-            institute_email=student['institute_email'], google_uid=student['google_uid'], name=student['name'])[0]
+        data['student_data'] = StudentData.objects.get(
+            institute_email=student['institute_email'], google_uid=student['google_uid'], name=student['name'])
         """
             Add foreign key for course
         """
         course = data.pop('course')
-        data['course'] = Course.objects.get_or_create(
-            course_code=course['course_code'], course_name=course['course_name'], instructor_name=course['instructor_name'])[0]
+        data['course'] = Course.objects.get(
+            course_code=course['course_code'], semester=course['semester'], academic_year=course['academic_year'])
         return data
