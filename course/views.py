@@ -25,6 +25,22 @@ class course_list(APIView):
         serializer = CourseSerializer(course, many=True)
         return Response(serializer.data)
 
+    def post(self, request, format=None):
+        logger.info(f"POST course_list request data: {request.data}")
+        received_access_token = request.GET.get('token', '-')
+        serializer = CourseSerializer(data=request.data)
+        if serializer.is_valid():
+            stored_access_token = Faculty.objects.get(
+                institute_email=serializer.validated_data['instructor'].institute_email).access_token
+            if stored_access_token != received_access_token:
+                logger.warn(f"Token mismatch POST course_list")
+                logger.info(
+                    f"Stored access_token {stored_access_token} received access_token {received_access_token}")
+                return Response({'detail': 'Credential mismatch. If problem persists, try logging out and logging back in.'}, status=status.HTTP_401_UNAUTHORIZED)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class course_detail(APIView):
     def get_object(self, pk):
@@ -49,7 +65,8 @@ class course_detail(APIView):
             stored_access_token = Faculty.objects.get(
                 institute_email=request.data['instructor'].institute_email).access_token
             if received_access_token != stored_access_token:
-                logger.warn(f"Access token invaid. Received token: {received_access_token} Stored token: {stored_access_token}")
+                logger.warn(
+                    f"Access token invaid. Received token: {received_access_token} Stored token: {stored_access_token}")
                 return Response({'detail': 'Invalid access token, try logging out and logging in again'}, status=status.HTTP_401_UNAUTHORIZED)
             serializer.save()
             return Response(serializer.data)
