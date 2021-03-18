@@ -76,7 +76,7 @@ class attendance_ble_count(APIView):
         received_server_key = request.GET.get('key', '-')
         received_ble_count = request.GET.get('ble', '0')
         received_attendance_id = request.GET.get('id', '-')
-        if received_ble_count < 0:
+        if int(received_ble_count) < 0:
             logger.error(
                 f"BLE count invalid for attendance {received_attendance_id} and server_key {received_server_key}, BLE count must be >=0. Received BLE count was {received_ble_count}")
             return Response({'detail': 'Invalid BLE count received'}, status=status.HTTP_400_BAD_REQUEST)
