@@ -16,6 +16,7 @@ from rest_framework.views import APIView
 
 from .models import Attendance
 from .serializers import AttendanceSerializer
+from students.models import StudentData
 
 logger = logging.getLogger(__file__)
 
@@ -67,3 +68,29 @@ class my_attendance(APIView):
         attendances_record = Attendance.objects.filter(
             student_data__institute_email=email).filter(course__course_code=course)
         return Response({'count': len(attendances_record)}, status=status.HTTP_200_OK)
+
+
+class attendance_ble_count(APIView):
+    def post(self, request, format=None):
+        logger.info(f"POST attendance_ble_count request data {request.data}")
+        received_server_key = request.GET.get('key', '-')
+        received_ble_count = request.GET.get('ble', '0')
+        received_attendance_id = request.GET.get('id', '-')
+        if received_ble_count < 0:
+            logger.error(
+                f"BLE count invalid for attendance {received_attendance_id} and server_key {received_server_key}, BLE count must be >=0. Received BLE count was {received_ble_count}")
+            return Response({'detail': 'Invalid BLE count received'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            stored_attendance = Attendance.objects.get(
+                attendance_id=received_attendance_id)
+            if received_server_key != stored_attendance.server_key:
+                logger.error(
+                    f"Server key mismatch. Received server_key: {received_server_key} Stored server key: {stored_attendance.server_key}")
+                return Response({'detail': f'Server key invalid for attendance id {received_attendance_id}'}, status=status.HTTP_401_UNAUTHORIZED)
+            stored_attendance.ble_verifications_count = received_ble_count
+            stored_attendance.save()
+            return Response(status=status.HTTP_200_OK)
+        except Attendance.DoesNotExist:
+            logger.error(
+                f"Could not find attendance for received attendance id {received_attendance_id}")
+            return Response({'detail': f'Could not find attendance with id {received_attendance_id}'}, status=status.HTTP_404_NOT_FOUND)
