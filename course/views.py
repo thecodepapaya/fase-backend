@@ -11,8 +11,8 @@ from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Course
-from .serializers import CourseSerializer
+from course.models import Course
+from course.serializers import CourseSerializer
 
 logger = logging.getLogger(__file__)
 

@@ -26,6 +26,8 @@ class Course(models.Model):
         Faculty, on_delete=models.CASCADE, null=True)
     # The timestamp at which the attendance for this course was last started
     start_timestamp = models.DateTimeField()
+    # The duration in minutes for which the attendance window opens for the course
+    attendance_duration = models.IntegerField(default=30)
 
     class Meta:
         constraints = [models.UniqueConstraint(

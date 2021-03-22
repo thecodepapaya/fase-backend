@@ -13,10 +13,11 @@ from rest_framework import status
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
-from .models import Attendance
-from .serializers import AttendanceSerializer
 from students.models import StudentData
+
+from attendance.models import Attendance, BleVerification
+from attendance.serializers import (AttendanceSerializer,
+                                    BleVerificationSerializer)
 
 logger = logging.getLogger(__file__)
 
@@ -51,7 +52,7 @@ class attendance_list(APIView):
                 logger.warn(
                     f"Attempt to mark attendance before attendance window opens. Email: {email} Course: {course}")
                 return Response({'detail': 'Attendance window has not started yet'}, status=status.HTTP_403_FORBIDDEN)
-            if (course.start_timestamp + timedelta(minutes=30) <= timezone.now()):
+            if (course.start_timestamp + timedelta(minutes=course.attendance_duration) <= timezone.now()):
                 logger.warn(
                     f"Attempt to mark attendance after attendance window closed. Email: {email} Course: {course}")
                 return Response({'detail': 'Time limit to mark attendance expired'}, status=status.HTTP_403_FORBIDDEN)
@@ -70,27 +71,44 @@ class my_attendance(APIView):
         return Response({'count': len(attendances_record)}, status=status.HTTP_200_OK)
 
 
-class attendance_ble_count(APIView):
+class ble_verification(APIView):
+
+    # TODO: remove later
+    def get(self, request, format=None):
+        ble_verification = BleVerification.objects.all()
+        serializer = BleVerificationSerializer(ble_verification, many=True)
+        return Response(serializer.data)
+
     def post(self, request, format=None):
-        logger.info(f"POST attendance_ble_count request data {request.data}")
+        logger.info(f"POST ble_verification request data {request.data}")
         received_server_key = request.GET.get('key', '-')
-        received_ble_count = request.GET.get('ble', '0')
-        received_attendance_id = request.GET.get('id', '-')
-        if int(received_ble_count) < 0:
-            logger.error(
-                f"BLE count invalid for attendance {received_attendance_id} and server_key {received_server_key}, BLE count must be >=0. Received BLE count was {received_ble_count}")
-            return Response({'detail': 'Invalid BLE count received'}, status=status.HTTP_400_BAD_REQUEST)
-        try:
-            stored_attendance = Attendance.objects.get(
-                attendance_id=received_attendance_id)
-            if received_server_key != stored_attendance.server_key:
+        serializer = BleVerificationSerializer(data=request.data)
+        if serializer.is_valid():
+            if BleVerification.objects.filter(
+                    verified_by=serializer.validated_data['verified_by'], verified_for=serializer.validated_data['verified_for']).exists():
                 logger.error(
-                    f"Server key mismatch. Received server_key: {received_server_key} Stored server key: {stored_attendance.server_key}")
-                return Response({'detail': f'Server key invalid for attendance id {received_attendance_id}'}, status=status.HTTP_401_UNAUTHORIZED)
-            stored_attendance.ble_verifications_count = received_ble_count
-            stored_attendance.save()
+                    f'Duplicate verification for attendance ID {serializer.validated_data["verified_for"]} by {serializer.validated_data["verified_by"]}')
+                return Response({'detail': f'Attendance for ID {serializer.validated_data["verified_for"]} already verified by {serializer.validated_data["verified_by"]}'}, status=status.HTTP_208_ALREADY_REPORTED)
+            try:
+                verified_by = Registration.objects.get(
+                    student_data__institute_email=serializer.validated_data['verified_by'])
+            except Registration.DoesNotExist:
+                logger.error(
+                    f"Failed to fetch student with email {serializer.validated_data['verified_by']}, not found")
+                return Response({'detail': f'Could not find record of student with email {serializer.validated_data["verified_by"]}, attendance not verified'}, status=status.HTTP_404_NOT_FOUND)
+            if not Attendance.objects.filter(attendance_id=serializer.validated_data['verified_for']).exists():
+                logger.error(
+                    f"Failed to fetch attendance with id {serializer.validated_data['verified_for']}, not found")
+                return Response({'detail': f'Could not find record of attenace with id {serializer.validated_data["verified_for"]}, attendance not verified'}, status=status.HTTP_404_NOT_FOUND)
+            if verified_by.server_key != received_server_key:
+                logger.error(
+                    f"Server key invalid for BLE attendance verification. Received server key {received_server_key} stored server_key {verified_by.server_key}")
+                return Response({'detail': 'Server key mismatch. You are not allowed to authenticate attendances. Try registering again'}, status=status.HTTP_401_UNAUTHORIZED)
+
+            serializer.save()
+            logger.info(
+                f"Verified attendance for ID {serializer.validated_data['verified_for']} by {serializer.validated_data['verified_by']}")
             return Response(status=status.HTTP_200_OK)
-        except Attendance.DoesNotExist:
-            logger.error(
-                f"Could not find attendance for received attendance id {received_attendance_id}")
-            return Response({'detail': f'Could not find attendance with id {received_attendance_id}'}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            logger.error(f"BAD POST request ble_verification {request.data}")
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
