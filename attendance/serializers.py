@@ -7,7 +7,7 @@ from rest_framework.renderers import JSONRenderer
 from students.models import StudentData
 from students.serializers import StudentDataSerializer
 
-from attendance.models import Attendance
+from attendance.models import Attendance, BleVerification
 
 
 class AttendanceSerializer(serializers.ModelSerializer):
@@ -32,3 +32,10 @@ class AttendanceSerializer(serializers.ModelSerializer):
         data['course'] = Course.objects.get(
             course_code=course['course_code'], semester=course['semester'], academic_year=course['academic_year'])
         return data
+
+
+class BleVerificationSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = BleVerification
+        fields = '__all__'

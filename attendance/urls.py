@@ -6,7 +6,7 @@ urlpatterns = [
     path('attendance/', views.attendance_list.as_view()),
     # path('attendance/<int:pk>/', views.attendance_detail.as_view()),
     path('attendance/<slug:email>/<slug:course>/', views.my_attendance.as_view()),
-    path('attendance-ble/', views.attendance_ble_count.as_view()),
+    path('ble-verification/', views.ble_verification.as_view()),
 
 ]
 

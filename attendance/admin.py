@@ -1,4 +1,5 @@
 from django.contrib import admin
-from .models import Attendance
+from attendance.models import Attendance, BleVerification
 
 admin.site.register(Attendance)
+admin.site.register(BleVerification)
