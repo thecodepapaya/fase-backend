@@ -90,8 +90,8 @@ class ble_verification(APIView):
                     f'Duplicate verification for attendance ID {serializer.validated_data["verified_for"]} by {serializer.validated_data["verified_by"]}')
                 return Response({'detail': f'Attendance for ID {serializer.validated_data["verified_for"]} already verified by {serializer.validated_data["verified_by"]}'}, status=status.HTTP_208_ALREADY_REPORTED)
             try:
-                verified_by = Registration.objects.get(
-                    student_data__institute_email=serializer.validated_data['verified_by'])
+                verified_by = Registration.objects.filter(
+                    student_data__institute_email=serializer.validated_data['verified_by'])[0]
             except Registration.DoesNotExist:
                 logger.error(
                     f"Failed to fetch student with email {serializer.validated_data['verified_by']}, not found")
