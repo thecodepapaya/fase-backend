@@ -12,6 +12,7 @@ def get_academic_year():
         choices.append((f'{year}-{year+1}', f'{year}-{year+1}'))
     return choices
 
+
 def get_default_academic_year():
     current_year = datetime.now().year
     academic_year = f'{current_year}-{current_year+1}'
@@ -29,10 +30,12 @@ class Course(models.Model):
         max_length=6, choices=semester_choice, default='autumn')
     academic_year = models.CharField(
         max_length=9, choices=get_academic_year(), default=get_default_academic_year())
-    instructors = models.ManyToManyField(User, blank=True)
-    students = models.on(User, blank=True)
+    instructors = models.ManyToManyField(
+        User, blank=True, related_name='instructors')
+    students = models.ManyToManyField(
+        User, blank=True, related_name='students')
     # The timestamp at which the attendance for this course was last started
-    start_timestamp = models.DateTimeField()
+    start_timestamp = models.DateTimeField(null=True, blank=True)
     # The duration in minutes for which the attendance window opens for the course
     attendance_duration_in_minutes = models.IntegerField(default=5)
 
