@@ -38,12 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'meta.apps.MetaConfig',
-    'users.apps.UsersConfig',
-    'course.apps.CourseConfig',
-    'registration.apps.RegistrationConfig',
-    'attendance.apps.AttendanceConfig',
-    'authentication.apps.AuthenticationConfig',
+    'meta',
+    'users',
+    'course',
+    'registration',
+    'attendance',
+    'authentication',
        
 ]
 
@@ -113,7 +113,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 

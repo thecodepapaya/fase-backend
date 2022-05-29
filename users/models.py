@@ -1,8 +1,7 @@
 from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-
-from .managers import CustomUserManager
+from .managers import UserManager
 
 
 class User(AbstractUser):
@@ -18,7 +17,7 @@ class User(AbstractUser):
 
     REQUIRED_FIELDS = ['name']
 
-    objects = CustomUserManager()
+    objects = UserManager()
 
     def has_perm(self, perm, obj=None):
         # "Does the user have a specific permission?"
