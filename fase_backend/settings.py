@@ -57,6 +57,15 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'authentication.auth.FirebaseJwtBackend',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ]
+}
+
 ROOT_URLCONF = 'fase_backend.urls'
 
 TEMPLATES = [
@@ -132,7 +141,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = "users.User"
 
-AUTHENTICATION_BACKENDs = [
+AUTHENTICATION_BACKENDS = [
+    'authentication.auth.FirebaseJwtBackend',
     'django.contrib.auth.backends.ModelBackend',
-    'authentication.authentication.FirebaseJwtBackend'
 ]
