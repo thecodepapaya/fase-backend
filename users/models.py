@@ -5,8 +5,14 @@ from .managers import UserManager
 
 
 class User(AbstractUser):
-    institute_email = models.EmailField(max_length=80, primary_key=True)
+    username = None
+    first_name = None
+    last_name = None
+    email = None
+
+    institute_email = models.EmailField(max_length=50, primary_key=True)
     name = models.CharField(max_length=50)
+    display_picture = models.URLField(blank=True, null=True)
 
     date_joined = models.DateTimeField(default=timezone.now)
     is_staff = models.BooleanField(default=False)

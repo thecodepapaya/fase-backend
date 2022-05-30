@@ -39,16 +39,3 @@ class UserManager(BaseUserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError(_('Superuser must have is_superuser=True.'))
         return self.create_user(institute_email, password, **extra_fields)
-
-    def get_full_name(self):
-        '''  
-        Returns the first_name plus the last_name, with a space in between.  
-        '''
-        full_name = '%s %s' % (self.first_name, self.last_name)
-        return full_name.strip()
-
-    def get_short_name(self):
-        '''  
-        Returns the short name for the user.  
-        '''
-        return self.first_name
