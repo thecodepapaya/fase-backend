@@ -10,7 +10,7 @@ class User(AbstractUser):
     last_name = None
     email = None
 
-    institute_email = models.EmailField(max_length=50, primary_key=True)
+    institute_email = models.EmailField(max_length=40, primary_key=True)
     name = models.CharField(max_length=50)
     display_picture = models.URLField(blank=True, null=True)
 
@@ -36,4 +36,4 @@ class User(AbstractUser):
         return self.admin
 
     def __str__(self):
-        return self.institute_email
+        return f'{self.institute_email} - {self.name}'

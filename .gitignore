@@ -173,3 +173,6 @@ cython_debug/
 #.idea/
 
 # End of https://www.toptal.com/developers/gitignore/api/django
+
+# Firebase service account private key
+fase-35702-firebase-adminsdk-hh8di-558e6de6c5.json

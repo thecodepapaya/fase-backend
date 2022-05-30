@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'registration',
     'attendance',
     'authentication',
-       
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
@@ -130,4 +130,9 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = "users.User" 
+AUTH_USER_MODEL = "users.User"
+
+AUTHENTICATION_BACKENDs = [
+    'django.contrib.auth.backends.ModelBackend',
+    'authentication.authentication.FirebaseJwtBackend'
+]
