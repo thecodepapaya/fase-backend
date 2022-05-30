@@ -12,13 +12,17 @@ logger = logging.getLogger(__file__)
 class FirebaseJwtBackend(authentication.BaseAuthentication):
 
     def authenticate(self, request):
-        token = request.headers.get('Authorization').split(' ')[1]
+        bearer_token = request.headers.get('Authorization')
+        if not bearer_token:
+            return None
 
-        if not token:
+        jwt_token = bearer_token.split(' ')[1]
+
+        if not jwt_token:
             return None
 
         try:
-            email = get_email_from_token(token)
+            email = get_email_from_token(jwt_token)
             user = User.objects.get(pk=email)
             return (user, None)
 

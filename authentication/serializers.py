@@ -7,8 +7,8 @@ from authentication.models import Token
 logger = logging.getLogger(__file__)
 
 
-class TokenSerializer(serializers.ModelSerializer):
+# class TokenSerializer(serializers.ModelSerializer):
 
-    class Meta:
-        model = Token
-        fields = ('token',)
+#     class Meta:
+#         model = Token
+#         fields = ('token',)
