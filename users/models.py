@@ -1,7 +1,12 @@
-from django.utils import timezone
-from django.db import models
+import logging
+
 from django.contrib.auth.models import AbstractUser
+from django.db import models
+from django.utils import timezone
+
 from .managers import UserManager
+
+logger = logging.getLogger(__file__)
 
 
 class User(AbstractUser):
@@ -25,15 +30,23 @@ class User(AbstractUser):
 
     objects = UserManager()
 
-    def has_perm(self, perm, obj=None):
-        # "Does the user have a specific permission?"
-        # Simplest possible answer: Yes, always
-        return True
+    # def has_perm(self, perm, obj=None):
+    #     # "Does the user have a specific permission?"
+    #     # Simplest possible answer: Yes, always
+    #     return True
+
+    # @property
+    # def is_admin(self):
+    #     # "Is the user a admin member?"
+    #     return self.admin
 
     @property
-    def is_admin(self):
-        # "Is the user a admin member?"
-        return self.admin
+    def is_faculty(self):
+        # Is the user a faculty
+        has_faculty_group = self.groups.filter(name='Faculty').exists()
+        logger.info(f'User has groups {self.groups}')
+
+        return has_faculty_group
 
     def __str__(self):
         return f'{self.institute_email} - {self.name}'
