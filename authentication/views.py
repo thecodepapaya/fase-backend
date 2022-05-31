@@ -12,8 +12,8 @@ from authentication.firebase import decode_token
 logger = logging.getLogger(__file__)
 
 
-@permission_classes([permissions.AllowAny])
 @api_view(http_method_names=['POST', ])
+@permission_classes((permissions.AllowAny,))
 def login(request):
     token_header = request.headers.get('Authorization')
 
@@ -29,6 +29,11 @@ def login(request):
     email = decoded_token.get('email')
     name = decoded_token.get('name')
     picture = decoded_token.get('picture', None)
+
+    is_iiitv_email = iiitv_email_validator(email)
+
+    if not is_iiitv_email:
+        return Response(data={'message': 'Only emails with IIITV domain name are allowed.'}, status=418)
 
     user, is_created = User.objects.get_or_create(
         pk=email, defaults={'name': name, 'display_picture': picture})
@@ -66,3 +71,9 @@ def _assign_user_group(user):
 
     group = _get_group(user.pk)
     user.groups.add(group)
+
+
+def iiitv_email_validator(email):
+    has_iiitv_domain = email.endswith('@iiitvadodara.ac.in')
+
+    return has_iiitv_domain

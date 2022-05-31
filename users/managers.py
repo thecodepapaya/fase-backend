@@ -1,5 +1,7 @@
 from django.contrib.auth.base_user import BaseUserManager
 from django.utils.translation import gettext_lazy as _
+import logging
+logger = logging.getLogger(__file__)
 
 """  
     Custom user model manager where email is the unique identifiers  
@@ -20,8 +22,8 @@ class UserManager(BaseUserManager):
         if not institute_email:
             raise ValueError(_('The Email must be set'))
         institute_email = self.normalize_email(institute_email)
-        print('Creating user ======')
-        print(f'Password: {{password}}')
+        logger.info('Creating user ======')
+        logger.info(f'Password: {{password}}')
         user = self.model(institute_email=institute_email, **extra_fields)
         user.set_password(password)
         user.save()
