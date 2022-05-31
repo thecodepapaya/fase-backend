@@ -1,5 +1,10 @@
+import logging
+
 import firebase_admin
-from firebase_admin import credentials, auth
+from firebase_admin import auth, credentials
+
+logger = logging.getLogger(__file__)
+
 
 cred = credentials.Certificate(
     "fase-35702-firebase-adminsdk-hh8di-558e6de6c5.json")
@@ -15,8 +20,7 @@ def decode_token(id_token):
 def get_email_from_token(id_token):
     decoded_token = decode_token(id_token)
 
-    print(f'Decoded JWT token: {decoded_token}')
     email = decoded_token.get('email')
-    print(f'Email from JWT: {email}')
+    logger.info(f'Email from JWT: {email}')
 
     return email

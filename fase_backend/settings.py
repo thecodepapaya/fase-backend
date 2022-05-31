@@ -62,7 +62,7 @@ REST_FRAMEWORK = {
         'authentication.auth.FirebaseJwtBackend',
     ),
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny',
+        'rest_framework.permissions.IsAuthenticated',
     ]
 }
 
