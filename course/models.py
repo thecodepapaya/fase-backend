@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django.contrib import admin
 from django.db import models
 from rest_framework.decorators import action
 from users.models import User
@@ -44,9 +45,14 @@ class Course(models.Model):
             fields=['course_code', 'semester', 'academic_year'], name='course_unique_per_sem_per_year')]
 
     def __str__(self):
-        return f'ID {self.id} - {self.academic_year}({self.semester}) - {self.course_code} {self.course_name}'
+        return f'{self.course_code}: {self.course_name}'
 
     @action(methods=['post'], detail=True)
     def start_attendance(self, request, pk=None):
 
         return
+
+
+class CourseAdmin(admin.ModelAdmin):
+    list_display = ('id', 'course_code', 'course_name',
+                    'semester', 'academic_year',)

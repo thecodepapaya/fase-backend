@@ -1,3 +1,4 @@
+from django.contrib import admin
 from django.db import models
 from users.models import User
 
@@ -29,8 +30,15 @@ class Registration(models.Model):
     bssid = models.CharField(max_length=23)
     local_ip = models.GenericIPAddressField()
 
+    os = models.CharField(max_length=50)
+    os_version = models.CharField(max_length=20)
+
     class Meta:
         ordering = ['-timestamp']
 
     def __str__(self):
-        return f"ID: {self.id} - Student: {self.student} - Device: {self.device_id}"
+        return str(self.id)
+
+
+class RegistrationAdmin(admin.ModelAdmin):
+    list_display = ('id', 'device_id', 'student', 'timestamp')
