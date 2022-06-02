@@ -42,6 +42,7 @@ class Course(models.Model):
     start_timestamp = models.DateTimeField(null=True, blank=True)
     # The duration in minutes for which the attendance window opens for the course
     attendance_duration_in_minutes = models.IntegerField(default=5)
+    description = models.TextField(null=True, blank=True)
 
     class Meta:
         constraints = [models.UniqueConstraint(
