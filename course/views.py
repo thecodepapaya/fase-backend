@@ -26,3 +26,6 @@ class CourseViewset(viewsets.ModelViewSet):
                 students__institute_email=user.institute_email)
 
         return courses
+
+    # def get_object(self,request):
+    #     pass

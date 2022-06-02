@@ -1,9 +1,9 @@
 import logging
 
+from django.contrib import admin
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
-from django.contrib import admin
 
 from .managers import UserManager
 
@@ -31,16 +31,6 @@ class User(AbstractUser):
 
     objects = UserManager()
 
-    # def has_perm(self, perm, obj=None):
-    #     # "Does the user have a specific permission?"
-    #     # Simplest possible answer: Yes, always
-    #     return True
-
-    # @property
-    # def is_admin(self):
-    #     # "Is the user a admin member?"
-    #     return self.admin
-
     @property
     def is_faculty(self):
         # Is the user a faculty
@@ -51,8 +41,3 @@ class User(AbstractUser):
 
     def __str__(self):
         return f'{self.institute_email} - {self.name}'
-
-
-
-class UserAdmin(admin.ModelAdmin):
-    list_display = ('institute_email', 'name', 'is_faculty')

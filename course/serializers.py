@@ -6,7 +6,7 @@ from rest_framework import serializers
 from rest_framework.parsers import JSONParser
 from rest_framework.renderers import JSONRenderer
 from rest_framework.fields import CurrentUserDefault
-
+from attendance.models import Attendance
 from course.models import Course
 
 logger = logging.getLogger(__file__)
@@ -14,6 +14,7 @@ logger = logging.getLogger(__file__)
 
 class CourseSerializer(serializers.ModelSerializer):
     instructors = UserSerializer(many=True, read_only=True)
+    is_already_marked = serializers.SerializerMethodField()
 
     class Meta:
         model = Course
@@ -26,7 +27,18 @@ class CourseSerializer(serializers.ModelSerializer):
             'instructors',
             'start_timestamp',
             'attendance_duration_in_minutes',
+            'is_already_marked',
         )
+
+    def get_is_already_marked(self, course):
+        user = self.context.get('request').user
+
+        attendance = Attendance.objects.filter(student=user, course=course,).exists() #TODO finish this query
+
+        if not attendance:
+            return False
+
+        return True
 
     def create(self, validated_data):
         user = self.context['request'].user

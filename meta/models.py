@@ -12,7 +12,3 @@ class MetaData(models.Model):
 
     def __str__(self):
         return f"{self.min_app_version}({self.min_app_build})"
-
-
-class MetaAdmin(admin.ModelAdmin):
-    list_display = ('min_app_version', 'min_app_build', )

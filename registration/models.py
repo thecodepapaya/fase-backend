@@ -38,7 +38,3 @@ class Registration(models.Model):
 
     def __str__(self):
         return str(self.id)
-
-
-class RegistrationAdmin(admin.ModelAdmin):
-    list_display = ('id', 'device_id', 'student', 'timestamp')

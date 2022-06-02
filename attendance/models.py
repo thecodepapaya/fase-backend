@@ -1,8 +1,9 @@
 from course.models import Course
+from django.contrib import admin
 from django.db import models
 from registration.models import Registration
 from users.models import User
-from django.contrib import admin
+import datetime
 
 
 class Attendance(models.Model):
@@ -11,12 +12,5 @@ class Attendance(models.Model):
     registration = models.ForeignKey(Registration, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
 
-    def is_already_marked(self, request):
-        pass
-
     def __str__(self):
         return str(self.id)
-
-
-class AttendanceAdmin(admin.ModelAdmin):
-    list_display = ('id', 'course', 'student', 'timestamp')
