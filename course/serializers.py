@@ -1,12 +1,12 @@
 import logging
+from datetime import datetime, timedelta
+from sqlite3 import Timestamp
 
-from django.http import Http404
-from users.serializers import UserSerializer
-from rest_framework import serializers
-from rest_framework.parsers import JSONParser
-from rest_framework.renderers import JSONRenderer
-from rest_framework.fields import CurrentUserDefault
 from attendance.models import Attendance
+from django.http import Http404
+from rest_framework import serializers
+from users.serializers import UserSerializer
+
 from course.models import Course
 
 logger = logging.getLogger(__file__)
@@ -32,8 +32,14 @@ class CourseSerializer(serializers.ModelSerializer):
 
     def get_is_already_marked(self, course):
         user = self.context.get('request').user
+        logger.warning(f'User: {user}')
 
-        attendance = Attendance.objects.filter(student=user, course=course,).exists() #TODO finish this query
+        attendance_window_start = course.start_timestamp
+        attendance_window_end = course.start_timestamp + \
+            timedelta(minutes=course.attendance_duration_in_minutes)
+
+        attendance = Attendance.objects.filter(
+            student=user, course=course, timestamp__gte=attendance_window_start, timestamp__lte=attendance_window_end).exists()
 
         if not attendance:
             return False
