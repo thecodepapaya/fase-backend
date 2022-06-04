@@ -1,4 +1,5 @@
-from rest_framework import status, viewsets, permissions
+from rest_framework import permissions, status, viewsets
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 
 from .models import MetaData
@@ -29,3 +30,9 @@ class MetadataViewset(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+@api_view(http_method_names=['GET', ])
+@permission_classes((permissions.AllowAny,))
+def ping(request):
+    return Response(status=200)
