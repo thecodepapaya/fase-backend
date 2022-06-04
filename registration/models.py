@@ -10,10 +10,10 @@ class Registration(models.Model):
     """
         Fields related to device info
     """
-    model = models.CharField(max_length=50)
-    brand = models.CharField(max_length=20)
-    device_id = models.CharField(max_length=50)
-    device_name = models.CharField(max_length=100)
+    model = models.CharField(max_length=100)
+    brand = models.CharField(max_length=100)
+    device_id = models.CharField(max_length=150)
+    device_name = models.CharField(max_length=150)
     is_physical = models.BooleanField(default=True)
     is_rooted = models.BooleanField(default=False)
 
@@ -26,12 +26,12 @@ class Registration(models.Model):
     """
         Fields related to Wifi info and local IP
     """
-    ssid = models.CharField(max_length=32)
-    bssid = models.CharField(max_length=23)
+    ssid = models.CharField(max_length=100)
+    bssid = models.CharField(max_length=100)
     local_ip = models.GenericIPAddressField()
 
-    os = models.CharField(max_length=50)
-    os_version = models.CharField(max_length=20)
+    os = models.CharField(max_length=100)
+    os_version = models.CharField(max_length=100)
 
     class Meta:
         ordering = ['-timestamp']
