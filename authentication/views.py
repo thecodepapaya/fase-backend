@@ -30,10 +30,10 @@ def login(request):
     name = decoded_token.get('name')
     picture = decoded_token.get('picture', None)
 
-    is_iiitv_email = iiitv_email_validator(email)
+    # is_iiitv_email = iiitv_email_validator(email)
 
-    if not is_iiitv_email:
-        return Response(data={'message': 'Only emails with IIITV domain name are allowed.'}, status=418)
+    # if not is_iiitv_email:
+        # return Response(data={'message': 'Only emails with IIITV domain name are allowed.'}, status=418)
 
     user, is_created = User.objects.get_or_create(
         pk=email, defaults={'name': name, 'display_picture': picture})

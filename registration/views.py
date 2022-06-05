@@ -46,6 +46,7 @@ class RegistrationViewset(viewsets.ModelViewSet):
         registration_valid = registration.device_id == device_id
 
         if registration_valid:
-            return Response(status=200)
+            serializer = RegistrationSerializer(registration)
+            return Response(data=serializer.data, status=200)
         else:
             return Response(data={'message': 'Registration invalid, please register again'}, status=404)

@@ -35,6 +35,9 @@ class CourseSerializer(serializers.ModelSerializer):
         user = self.context.get('request').user
         logger.warning(f'User: {user}')
 
+        if not course.start_timestamp:
+            return False
+
         attendance_window_start = course.start_timestamp
         attendance_window_end = course.start_timestamp + \
             timedelta(minutes=course.attendance_duration_in_minutes)
