@@ -23,10 +23,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-8$9fnxkgkvkv$(t^%&fsr)ouu9!(g$r$22p5v)jp_rgguc=$g%'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['192.168.1.8', '192.168.1.7',
-                 '127.0.01', 'localhost', '0.0.0.0']
+                 '127.0.01', 'localhost', '0.0.0.0', 'thecodepapaya.dev']
 
 
 # Application definition
