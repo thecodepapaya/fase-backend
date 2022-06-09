@@ -38,12 +38,12 @@ class RegistrationViewset(viewsets.ModelViewSet):
         if not device_id:
             return Response(data={'message': 'device_id is required'}, status=400)
 
-        registration = Registration.objects.filter(student=user).first()
+        registration = Registration.objects.filter(device_id=device_id).first()
 
         if not registration:
             return Response(data={'message': 'Registration not found'}, status=404)
 
-        registration_valid = registration.device_id == device_id
+        registration_valid = registration.student == user
 
         if registration_valid:
             serializer = RegistrationSerializer(registration)
