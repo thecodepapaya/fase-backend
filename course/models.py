@@ -55,3 +55,11 @@ class Course(models.Model):
     def start_attendance(self, request, pk=None):
 
         return
+
+class CourseWindowRecord(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    start_timestamp = models.DateTimeField(blank=True,null=True)
+    attendance_duration_in_minutes = models.IntegerField(default=5)
+
+    def __str__(self):
+        return f'{self.course}'

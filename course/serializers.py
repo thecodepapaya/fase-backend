@@ -7,7 +7,7 @@ from django.http import Http404
 from rest_framework import serializers
 from users.serializers import UserSerializer
 
-from course.models import Course
+from course.models import Course, CourseWindowRecord
 
 logger = logging.getLogger(__file__)
 
@@ -63,6 +63,14 @@ class CourseSerializer(serializers.ModelSerializer):
         return course
 
     def update(self, instance, validated_data):
+
+        validated_start_timestamp = validated_data.get(
+            'start_timestamp', instance.start_timestamp)
+        instance_start_timestamp = instance.start_timestamp
+        has_attendance_started = instance_start_timestamp != validated_start_timestamp
+        
+        logger.info(f'Has attendance started: {has_attendance_started}')
+
         instance.course_name = validated_data.get(
             'course_name', instance.course_name)
         instance.course_code = validated_data.get(
@@ -76,5 +84,13 @@ class CourseSerializer(serializers.ModelSerializer):
             'attendance_duration_in_minutes', instance.attendance_duration_in_minutes)
 
         instance.save()
+
+        # Check and create a record of CourseWindowRecord if start_timestamp of the course changed
+        if(has_attendance_started):
+            course_window_record = CourseWindowRecord(
+                course_id=instance.id,
+                start_timestamp=instance.start_timestamp,
+                attendance_duration_in_minutes=instance.attendance_duration_in_minutes,)
+            course_window_record.save()
 
         return instance
