@@ -5,7 +5,7 @@ from course.models import Course, CourseWindowRecord
 
 class CourseAdmin(admin.ModelAdmin):
     list_display = ('id', 'course_code', 'course_name',
-                    'semester', 'academic_year',)
+                    'semester', 'academic_year','is_active')
 
 
 class CourseWindowRecordAdmin(admin.ModelAdmin):

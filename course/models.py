@@ -43,6 +43,7 @@ class Course(models.Model):
     # The duration in minutes for which the attendance window opens for the course
     attendance_duration_in_minutes = models.IntegerField(default=5)
     description = models.TextField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
 
     class Meta:
         constraints = [models.UniqueConstraint(

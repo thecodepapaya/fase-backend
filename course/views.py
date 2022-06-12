@@ -20,10 +20,10 @@ class CourseViewset(viewsets.ModelViewSet):
 
         if is_faculty:
             courses = Course.objects.filter(
-                instructors__institute_email=user.institute_email)
+                instructors__institute_email=user.institute_email, is_active=True)
         else:
             courses = Course.objects.filter(
-                students__institute_email=user.institute_email)
+                students__institute_email=user.institute_email, is_active=True)
 
         return courses
 
