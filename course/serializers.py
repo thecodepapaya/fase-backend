@@ -1,6 +1,5 @@
 import logging
 from datetime import datetime, timedelta
-from sqlite3 import Timestamp
 
 from attendance.models import Attendance
 from django.http import Http404
@@ -68,7 +67,7 @@ class CourseSerializer(serializers.ModelSerializer):
             'start_timestamp', instance.start_timestamp)
         instance_start_timestamp = instance.start_timestamp
         has_attendance_started = instance_start_timestamp != validated_start_timestamp
-        
+
         logger.info(f'Has attendance started: {has_attendance_started}')
 
         instance.course_name = validated_data.get(

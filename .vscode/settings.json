@@ -4,6 +4,7 @@
         "ssid",
         "startwith",
         "Viewset",
-        "viewsets"
+        "viewsets",
+        "xlsxwriter"
     ]
 }
