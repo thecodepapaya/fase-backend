@@ -1,5 +1,7 @@
 import logging
 
+from django.http import HttpResponseNotFound, HttpResponse
+
 from course.models import Course, CourseWindowRecord
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import api_view, permission_classes
@@ -32,10 +34,23 @@ class AttendanceViewset(viewsets.ModelViewSet):
 def generate(request, course_id):
     try:
         course = Course.objects.get(id=course_id)
-        
-        file = generate_workbook_for_single_course(course)
 
-        return Response(status=200)
+        file_path = generate_workbook_for_single_course(course)
+
+        try:
+            with open(file_path, 'rb') as excel:
+                file_data = excel.read()
+
+            # sending response
+            response = HttpResponse(file_data)
+            response['Content-Disposition'] = f'attachment; filename="{course.course_code}-attendance.xlsx"'
+            response['Content-Length'] = len(file_data)
+            response['Content-Type'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+
+        except IOError:
+            response = Response(status=404)
+
+        return response
 
     except Course.DoesNotExist:
         return Response(status=404)

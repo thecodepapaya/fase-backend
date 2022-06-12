@@ -12,25 +12,26 @@ logger = logging.getLogger(__file__)
 
 
 _date_format = None
-_date_time_format_string = 'dd/mm/yy - hh:mm tt'
+_date_time_format_string = 'dd/mm/yy - hh:mm'
 _date_time_format_data = {
     'num_format': _date_time_format_string, 'align': 'left'}
 
 
 def generate_workbook_for_single_course(course: Course):
-    workbook = _create_attendance_workbook(course.course_code)
+    workbook, file_path = _create_attendance_workbook(course.course_code)
     worksheet = workbook.add_worksheet(name=course.course_code)
 
     _populate_worksheet_for_course(course, worksheet)
 
     workbook.close()
 
-    return workbook
+    return file_path
 
 
+# TODO create this method for all attendances
 # def generate_workbook_for_all_courses(user:User):
 def generate_workbook_for_all_courses():
-    workbook = _create_attendance_workbook('all_attendance')
+    workbook, file_path = _create_attendance_workbook('all_attendance')
     # courses = Course.objects.filter(instructor.)
     worksheet = workbook.add_worksheet(name='course.course_code')
 
@@ -51,7 +52,7 @@ def _create_attendance_workbook(name='attendance'):
     global _date_format
     _date_format = workbook.add_format(_date_time_format_data)
 
-    return workbook
+    return workbook, file_path
 
 
 def _populate_worksheet_for_course(course: Course, worksheet: worksheet):
@@ -107,3 +108,5 @@ def _populate_student_names_and_attendance_columns(students, attendance_windows,
             timedelta(hours=5.5)  # UTC to indian time
         worksheet.write_datetime(0, column, indian_time, _date_format)
         column += 1
+
+    worksheet.set_column(0, 0, 35)
