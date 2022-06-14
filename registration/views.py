@@ -7,6 +7,12 @@ from rest_framework.response import Response
 
 from .models import Registration
 from .serializers import RegistrationSerializer
+from .utils import send_mail
+from fase_backend import settings
+from users.models import User
+
+from apscheduler.schedulers.background import BackgroundScheduler
+
 
 logger = logging.getLogger(__file__)
 
@@ -49,4 +55,14 @@ class RegistrationViewset(viewsets.ModelViewSet):
             serializer = RegistrationSerializer(registration)
             return Response(data=serializer.data, status=200)
         else:
+            scheduler = BackgroundScheduler()
+            scheduler.add_job(func = mails, args = (user.name, user.institute_email[:user.institute_email.index("@")], device_id, registration.device_id))
+            scheduler.start()
             return Response(data={'message': 'Registration invalid, please register again'}, status=404)
+
+
+def mails(name, rollno, new_device, old_device):
+
+    params = {"name": name, "rollno": rollno, "new_device": new_device, "old_device": old_device}
+
+    send_mail(params, settings.EMAIL, settings.PASSWORD)
