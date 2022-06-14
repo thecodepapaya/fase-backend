@@ -71,7 +71,8 @@ def _populate_worksheet_for_course(course: Course, worksheet: worksheet):
 
         for student in students:
             has_marked = marked_attendances.filter(student=student).exists()
-            worksheet.write(row, column, has_marked)
+            integer_representation = 1 if has_marked else 0
+            worksheet.write(row, column, integer_representation)
             row += 1
 
         column += 1
