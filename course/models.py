@@ -2,6 +2,7 @@ import logging
 from datetime import datetime
 
 from django.contrib import admin
+from django.core.validators import FileExtensionValidator
 from django.db import models
 from rest_framework.decorators import action
 from users.models import User
@@ -44,6 +45,10 @@ class Course(models.Model):
     # The duration in minutes for which the attendance window opens for the course
     attendance_duration_in_minutes = models.IntegerField(default=5)
     is_active = models.BooleanField(default=True)
+
+    # The csv which stores a list of students for this course. Adding this file helps populate the `students` field.
+    course_student_mapper_file = models.FileField(
+        null=True, blank=True, upload_to='student_mapper_csv/', validators=[FileExtensionValidator(allowed_extensions=["csv", "xlsx"])])
 
     class Meta:
         constraints = [models.UniqueConstraint(

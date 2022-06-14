@@ -62,6 +62,7 @@ class CourseSerializer(serializers.ModelSerializer):
 
         return course
 
+    #TODO move into signals
     def update(self, instance, validated_data):
 
         validated_start_timestamp = validated_data.get(
