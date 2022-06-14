@@ -36,8 +36,8 @@ def add_students_from_csv(course: Course, request):
 
         course.save()
 
-        messages.add_message(
-            request, messages.INFO, f'Successfully populated student list from CSV for course ID {course.id}')
+        messages.info(
+            request, f'Successfully populated student list from CSV for course ID {course.id}')
 
         return
 

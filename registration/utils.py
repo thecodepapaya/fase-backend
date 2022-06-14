@@ -7,7 +7,7 @@ import os
 
 def send_mail(params, email, password):
 
-    print(params['name'])
+    # print(params['name'])
     msg = MIMEMultipart('alternative')
     msg['Subject'] = f"Alert! Device changed for {params['rollno']}"
     msg['From'] = email
