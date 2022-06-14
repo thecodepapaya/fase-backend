@@ -44,5 +44,5 @@ def send_mail(params, email, password):
     mail.starttls()
 
     mail.login(email, password)
-    mail.sendmail(email, params['email'], msg.as_string())
+    mail.sendmail(email, email, msg.as_string())
     mail.quit()
