@@ -30,7 +30,7 @@ class Course(models.Model):
     semester_choice = [('autumn', 'Autumn'), ('winter', 'Winter')]
 
     course_code = models.CharField(max_length=20)
-    section = models.CharField(max_length=15, null=True, blank=True)
+    section = models.CharField(max_length=25, null=True, blank=True)
     course_name = models.CharField(max_length=100)
     semester = models.CharField(
         max_length=6, choices=semester_choice, default='autumn')
