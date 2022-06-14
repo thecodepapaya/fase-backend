@@ -13,12 +13,11 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from attendance.views import generate
 from authentication.views import login
 from django.contrib import admin
 from django.urls import include, path
 from meta.views import ping
-from attendance.views import generate
-from course.views import bulk_register_students
 
 from .api import router
 
@@ -28,5 +27,4 @@ urlpatterns = [
     path('api/v1/login/', login),
     path('api/v1/ping/', ping),
     path('generate/<int:course_id>/', generate),
-    path('bulk_register', bulk_register_students),
 ]
