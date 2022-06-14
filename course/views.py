@@ -5,6 +5,13 @@ from rest_framework import viewsets
 from .models import Course
 from .serializers import CourseSerializer
 
+from rest_framework import permissions, status, viewsets
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
+
+from users.models import User
+import pandas as pd
+
 logger = logging.getLogger(__file__)
 
 
@@ -29,3 +36,35 @@ class CourseViewset(viewsets.ModelViewSet):
 
     # def get_object(self,request):
     #     pass
+
+
+@api_view(http_method_names=['POST', ])
+@permission_classes((permissions.AllowAny,))
+def bulk_register_students(request):
+
+    user = request.user
+    print(user)
+    course_code = request.data['course_code']
+    section = request.data['section']
+    is_faculty = user.groups.filter(name='Faculty').exists()
+
+    if is_faculty:
+
+        course = Course.objects.get(course_code=course_code, section=section)
+        csv = request.FILES['file']
+        df = pd.read_csv(csv)
+        for i in df.index:
+            user_obj = User.objects.get_or_create(
+                institute_email = str(df['rollno'][i])+"@iiitvadodara.ac.in",
+                name = df['name'][i]
+            )[0]
+            print(user_obj)
+            user_obj.save()
+            course.students.add(user_obj)
+
+        course.save()
+
+    else:
+        return Response(status = 403)
+
+    return Response({"message": "successful"})

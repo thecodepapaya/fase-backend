@@ -20,6 +20,7 @@ class CourseSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'course_code',
+            'section',
             'course_name',
             'semester',
             'academic_year',

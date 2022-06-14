@@ -29,6 +29,7 @@ class Course(models.Model):
     semester_choice = [('autumn', 'Autumn'), ('winter', 'Winter')]
 
     course_code = models.CharField(max_length=20)
+    section = models.CharField(max_length = 15, null = True, blank = True)
     course_name = models.CharField(max_length=100)
     semester = models.CharField(
         max_length=6, choices=semester_choice, default='autumn')
@@ -63,4 +64,4 @@ class CourseWindowRecord(models.Model):
     attendance_duration_in_minutes = models.IntegerField(default=5)
 
     def __str__(self):
-        return f'{self.course}'
+        return f'{self.course} + {self.section}'
