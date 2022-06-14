@@ -34,16 +34,14 @@ class CourseViewset(viewsets.ModelViewSet):
 
         return courses
 
-    # def get_object(self,request):
-    #     pass
 
-
+# TODO needs a refactor :time_bomb:
 @api_view(http_method_names=['POST', ])
 @permission_classes((permissions.AllowAny,))
 def bulk_register_students(request):
 
     user = request.user
-    print(user)
+    # print(user)
     course_code = request.data['course_code']
     section = request.data['section']
     is_faculty = user.groups.filter(name='Faculty').exists()
@@ -54,17 +52,17 @@ def bulk_register_students(request):
         csv = request.FILES['file']
         df = pd.read_csv(csv)
         for i in df.index:
-            user_obj = User.objects.get_or_create(
-                institute_email = str(df['rollno'][i])+"@iiitvadodara.ac.in",
-                name = df['name'][i]
-            )[0]
-            print(user_obj)
+            user_obj, _ = User.objects.get_or_create(
+                institute_email=str(df['rollno'][i])+"@iiitvadodara.ac.in",
+                name=df['name'][i]
+            )
+            # print(user_obj)
             user_obj.save()
             course.students.add(user_obj)
 
         course.save()
 
-    else:
-        return Response(status = 403)
+        return Response({"message": f"Successful enrolled students in {course_code}"})
 
-    return Response({"message": "successful"})
+    else:
+        return Response(status=403)

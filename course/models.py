@@ -29,7 +29,7 @@ class Course(models.Model):
     semester_choice = [('autumn', 'Autumn'), ('winter', 'Winter')]
 
     course_code = models.CharField(max_length=20)
-    section = models.CharField(max_length = 15, null = True, blank = True)
+    section = models.CharField(max_length=15, null=True, blank=True)
     course_name = models.CharField(max_length=100)
     semester = models.CharField(
         max_length=6, choices=semester_choice, default='autumn')
@@ -43,25 +43,20 @@ class Course(models.Model):
     start_timestamp = models.DateTimeField(null=True, blank=True)
     # The duration in minutes for which the attendance window opens for the course
     attendance_duration_in_minutes = models.IntegerField(default=5)
-    description = models.TextField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
     class Meta:
         constraints = [models.UniqueConstraint(
-            fields=['course_code', 'semester', 'academic_year'], name='course_unique_per_sem_per_year'), ]
+            fields=['course_code', 'semester', 'section', 'academic_year'], name='course_unique_per_sem_per_year_per_section'), ]
 
     def __str__(self):
-        return f'{self.course_code}: {self.course_name}'
+        return f'{self.course_code}: {self.course_name} (Section: {self.section})'
 
-    @action(methods=['post'], detail=True)
-    def start_attendance(self, request, pk=None):
-
-        return
 
 class CourseWindowRecord(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    start_timestamp = models.DateTimeField(blank=True,null=True)
+    start_timestamp = models.DateTimeField(blank=True, null=True)
     attendance_duration_in_minutes = models.IntegerField(default=5)
 
     def __str__(self):
-        return f'{self.course} + {self.section}'
+        return f'{self.course}'

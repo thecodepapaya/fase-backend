@@ -20,8 +20,8 @@ class CourseSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'course_code',
-            'section',
             'course_name',
+            'section',
             'semester',
             'academic_year',
             'instructors',
@@ -75,6 +75,8 @@ class CourseSerializer(serializers.ModelSerializer):
             'course_name', instance.course_name)
         instance.course_code = validated_data.get(
             'course_code', instance.course_code)
+        instance.section = validated_data.get(
+            'section', instance.section)
         instance.semester = validated_data.get('semester', instance.semester)
         instance.academic_year = validated_data.get(
             'academic_year', instance.academic_year)
@@ -85,12 +87,13 @@ class CourseSerializer(serializers.ModelSerializer):
 
         instance.save()
 
-        # Check and create a record of CourseWindowRecord if start_timestamp of the course changed
+        # Check and create a record of CourseWindowRecord if start_timestamp of the course has changed
         if(has_attendance_started):
             course_window_record = CourseWindowRecord(
                 course_id=instance.id,
                 start_timestamp=instance.start_timestamp,
                 attendance_duration_in_minutes=instance.attendance_duration_in_minutes,)
+
             course_window_record.save()
 
         return instance
