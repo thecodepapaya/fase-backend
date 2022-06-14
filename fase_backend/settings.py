@@ -150,3 +150,6 @@ AUTHENTICATION_BACKENDS = [
 
 EMAIL = config('EMAIL')
 PASSWORD = config('PASSWORD')
+
+CSRF_TRUSTED_ORIGINS = ['https://fase.thecodepapaya.dev',
+                        'http://localhost:8000', 'http://0.0.0.0:8000']
