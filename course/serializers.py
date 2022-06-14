@@ -28,7 +28,6 @@ class CourseSerializer(serializers.ModelSerializer):
             'start_timestamp',
             'attendance_duration_in_minutes',
             'is_already_marked',
-            'description',
         )
 
     def get_is_already_marked(self, course):
