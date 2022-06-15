@@ -48,7 +48,7 @@ class Course(models.Model):
 
     # The csv which stores a list of students for this course. Adding this file helps populate the `students` field.
     course_student_mapper_file = models.FileField(
-        null=True, blank=True, upload_to='student_mapper_csv/', validators=[FileExtensionValidator(allowed_extensions=["csv", "xlsx"])])
+        null=True, blank=True, upload_to='student_mapper_csv/', validators=[FileExtensionValidator(allowed_extensions=["csv"])])
 
     class Meta:
         constraints = [models.UniqueConstraint(

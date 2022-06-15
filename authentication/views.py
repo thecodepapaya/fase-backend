@@ -40,7 +40,7 @@ def login(request):
 
     if is_created:
         response_code = 201
-        _assign_user_group(user)
+        assign_user_group(user)
     else:
         response_code = 200
 
@@ -62,7 +62,7 @@ def _get_group(email):
     return group
 
 
-def _assign_user_group(user):
+def assign_user_group(user):
     already_has_group = user.groups.count() != 0
 
     if already_has_group:

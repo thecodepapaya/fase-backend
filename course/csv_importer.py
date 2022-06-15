@@ -2,6 +2,7 @@ import logging
 
 import pandas as pd
 from django.contrib import messages
+from authentication.views import assign_user_group
 from users.models import User
 
 from .models import Course
@@ -29,9 +30,12 @@ def add_students_from_csv(course: Course, request):
             institute_email = student_data['email'][index]
             name = student_data['name'][index]
 
-            user_obj, _ = User.objects.get_or_create(
+            user_obj, is_created = User.objects.get_or_create(
                 institute_email=institute_email, name=name)
-
+            
+            if is_created:
+                assign_user_group(user_obj)
+            
             course.students.add(user_obj)
 
         course.save()
