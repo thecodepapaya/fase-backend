@@ -17,7 +17,7 @@ from attendance.views import generate
 from authentication.views import login
 from django.contrib import admin
 from django.urls import include, path
-from meta.views import ping
+from meta.views import download_apk, download_ios, ping
 
 from .api import router
 
@@ -27,4 +27,6 @@ urlpatterns = [
     path('api/v1/login/', login),
     path('api/v1/ping/', ping),
     path('generate/<int:course_id>/', generate),
+    path('download/apk/', download_apk),
+    path('download/ios/', download_ios),
 ]

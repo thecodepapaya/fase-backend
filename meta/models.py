@@ -11,3 +11,12 @@ class MetaData(models.Model):
 
     def __str__(self):
         return f"{self.min_app_version}({self.min_app_build})"
+
+
+class DownloadLink(models.Model):
+    apk_download = models.URLField(default='')
+    ios_download = models.URLField(default='')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
