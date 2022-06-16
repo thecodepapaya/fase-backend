@@ -6,6 +6,7 @@ from course.models import Course, CourseWindowRecord
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
+from rest_framework.permissions import DjangoModelPermissions
 
 from .generate_spreadsheet import generate_workbook_for_single_course
 from .models import Attendance
@@ -17,6 +18,7 @@ logger = logging.getLogger(__file__)
 class AttendanceViewset(viewsets.ModelViewSet):
     queryset = Attendance.objects.all()
     serializer_class = AttendanceSerializer
+    permission_classes = [DjangoModelPermissions]
 
     def destroy(self, request, *args, **kwargs):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)

@@ -1,10 +1,8 @@
 import logging
 
 import pandas as pd
-from rest_framework import permissions, status, viewsets
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.response import Response
-from users.models import User
+from rest_framework import viewsets
+from rest_framework.permissions import DjangoModelPermissions
 
 from .models import Course
 from .serializers import CourseSerializer
@@ -14,6 +12,7 @@ logger = logging.getLogger(__file__)
 
 class CourseViewset(viewsets.ModelViewSet):
     serializer_class = CourseSerializer
+    permission_classes = [DjangoModelPermissions]
 
     def get_queryset(self):
         user = self.request.user

@@ -3,10 +3,10 @@ import logging
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from fase_backend import settings
-from rest_framework import permissions, status, viewsets
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from users.models import User
+from rest_framework.permissions import DjangoModelPermissions
 
 from .models import Registration
 from .serializers import RegistrationSerializer
@@ -18,6 +18,7 @@ logger = logging.getLogger(__file__)
 class RegistrationViewset(viewsets.ModelViewSet):
     queryset = Registration.objects.all()
     serializer_class = RegistrationSerializer
+    permission_classes = [DjangoModelPermissions]
 
     # All Methods return 405 except create i.e only POST is allowed
 

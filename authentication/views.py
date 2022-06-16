@@ -30,11 +30,6 @@ def login(request):
     name = decoded_token.get('name')
     picture = decoded_token.get('picture', None)
 
-    # is_iiitv_email = iiitv_email_validator(email)
-
-    # if not is_iiitv_email:
-        # return Response(data={'message': 'Only emails with IIITV domain name are allowed.'}, status=418)
-
     user, is_created = User.objects.get_or_create(
         pk=email, defaults={'name': name, 'display_picture': picture})
 
@@ -50,14 +45,16 @@ def login(request):
 
 
 def _get_group(email):
-    faculty_group = Group.objects.get(name='Faculty')
     student_group = Group.objects.get(name='Student')
 
-    is_student = email.split('@')[0].startswith('20')
+    has_iiitv_domain = iiitv_email_validator(email)
+    begins_with_number = email.split('@')[0].startswith('20')
 
-    group = student_group if is_student else faculty_group
+    is_student = has_iiitv_domain and begins_with_number
 
-    logger.info(f'Selected Group for new user: {group}')
+    group = student_group if is_student else None
+
+    logger.info(f'Selected Group for new user {email}: {group}')
 
     return group
 
@@ -70,7 +67,9 @@ def assign_user_group(user):
         return
 
     group = _get_group(user.pk)
-    user.groups.add(group)
+
+    if group:
+        user.groups.add(group)
 
 
 def iiitv_email_validator(email):

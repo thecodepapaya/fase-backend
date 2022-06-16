@@ -5,7 +5,7 @@ from django.contrib import messages
 from authentication.views import assign_user_group
 from users.models import User
 
-from .models import Course
+from ..models import Course
 
 logger = logging.getLogger(__file__)
 
@@ -47,7 +47,7 @@ def add_students_from_csv(course: Course, request):
 
     except Exception as e:
         messages.error(
-            request, f'Error occurred. Please check if the CSV is properly formatted. Aborting import for course ID {course.id}')
+            request, f'Error occurred. Please check if the CSV is properly formatted. Error {e}. Aborting import for course ID {course.id}')
 
         logger.warning(f'Failed to add students to course: {e}')
         return

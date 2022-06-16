@@ -1,9 +1,11 @@
 from django.contrib import admin
+from django.http import HttpRequest
 
+from course.actions.add_students_from_csv import add_students_from_csv
 from course.models import Course, CourseWindowRecord
-from .csv_importer import add_students_from_csv
 
 
+@admin.action(permissions=['change'])
 def populate_students_list_from_csv(modeladmin, request, queryset):
 
     for course in queryset:
@@ -15,6 +17,24 @@ class CourseAdmin(admin.ModelAdmin):
                     'semester', 'academic_year', 'is_active',)
     search_fields = ['id', 'course_code', 'course_name', 'section']
     actions = [populate_students_list_from_csv]
+
+    def get_queryset(self, request: HttpRequest):
+        user = request.user
+        query_set = super().get_queryset(request)
+
+        is_faculty = user.groups.filter(name="Faculty").exists()
+        is_student = user.groups.filter(name="Student").exists()
+
+        if is_faculty:
+            filtered_data = query_set.filter(instructors=user)
+
+        elif is_student:
+            filtered_data = query_set.filter(students=user)
+
+        else:
+            filtered_data = query_set
+
+        return filtered_data
 
 
 class CourseWindowRecordAdmin(admin.ModelAdmin):
