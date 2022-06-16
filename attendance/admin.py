@@ -8,6 +8,7 @@ class AttendanceAdmin(admin.ModelAdmin):
     list_display = ('id', 'course', 'student', 'timestamp')
     search_fields = ['id', 'course__course_code', 'course__course_name',
                      'student__institute_email', 'student__name']
+    raw_id_fields = ('student', 'course','registration')
 
     def get_queryset(self, request: HttpRequest):
         user = request.user
@@ -18,7 +19,8 @@ class AttendanceAdmin(admin.ModelAdmin):
         is_student = user.groups.filter(name="Student").exists()
 
         if is_faculty:
-            courses = user.instructors.all()  # Reverse M2M relationship - all courses where user is instructor
+            # Reverse M2M relationship - all courses where user is instructor
+            courses = user.instructors.all()
             filtered_query_set = query_set.filter(course__in=courses)
 
         elif is_student:

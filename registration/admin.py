@@ -8,6 +8,7 @@ class RegistrationAdmin(admin.ModelAdmin):
     list_display = ('id', 'device_id', 'student', 'timestamp')
     search_fields = ['id', 'student__name',
                      'student__institute_email', 'device_id']
+    raw_id_fields = ('student',)
 
     def get_queryset(self, request: HttpRequest):
         user = request.user

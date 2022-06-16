@@ -42,6 +42,7 @@ class CourseWindowRecordAdmin(admin.ModelAdmin):
                     'attendance_duration_in_minutes',)
     search_fields = ['id', 'course__course_name',
                      'course__course_code', 'course__section']
+    raw_id_fields = ('course',)
 
 
 admin.site.register(Course, CourseAdmin)
