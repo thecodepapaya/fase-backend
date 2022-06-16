@@ -16,26 +16,14 @@ logger = logging.getLogger(__file__)
 
 
 class RegistrationViewset(viewsets.ModelViewSet):
-    queryset = Registration.objects.all()
     serializer_class = RegistrationSerializer
     permission_classes = [DjangoModelPermissions]
 
-    # All Methods return 405 except create i.e only POST is allowed
+    def get_queryset(self):
+        user = self.request.user
+        query_set = Registration.objects.filter(student=user)
 
-    def get(self, request, *args, **kwargs):
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
-    def list(self, request, *args, **kwargs):
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
-    def destroy(self, request, *args, **kwargs):
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
-    def update(self, request, *args, **kwargs):
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
-    def partial_update(self, request, *args, **kwargs):
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        return query_set
 
     @action(methods=['post'], detail=False, url_path="verify")
     def verify_registration(self, request):

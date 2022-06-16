@@ -16,9 +16,14 @@ logger = logging.getLogger(__file__)
 
 
 class AttendanceViewset(viewsets.ModelViewSet):
-    queryset = Attendance.objects.all()
     serializer_class = AttendanceSerializer
     permission_classes = [DjangoModelPermissions]
+
+    def get_queryset(self):
+        user = self.request.user
+        query_set = Attendance.objects.filter(student=user)
+
+        return query_set
 
     def destroy(self, request, *args, **kwargs):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
