@@ -53,6 +53,7 @@ class Course(models.Model):
     class Meta:
         constraints = [models.UniqueConstraint(
             fields=['course_code', 'semester', 'section', 'academic_year'], name='course_unique_per_sem_per_year_per_section'), ]
+        ordering = ['-id']
 
     def __str__(self):
         return f'{self.course_code}: {self.course_name} (Section: {self.section})'

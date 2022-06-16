@@ -31,6 +31,10 @@ class User(AbstractUser):
 
     objects = UserManager()
 
+    class Meta:
+        ordering = ['institute_email']
+
+
     @property
     def is_faculty(self):
         # Is the user a faculty
