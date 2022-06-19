@@ -15,6 +15,7 @@ logger = logging.getLogger(__file__)
 class CourseSerializer(serializers.ModelSerializer):
     instructors = UserSerializer(many=True, read_only=True)
     is_already_marked = serializers.SerializerMethodField()
+    color = serializers.SerializerMethodField()
 
     class Meta:
         model = Course
@@ -29,12 +30,12 @@ class CourseSerializer(serializers.ModelSerializer):
             'start_timestamp',
             'attendance_duration_in_minutes',
             'is_already_marked',
-            'color'
+            'color',
         )
 
     def get_is_already_marked(self, course):
         user = self.context.get('request').user
-        logger.warning(f'User: {user}')
+        logger.info(f'User: {user}')
 
         if not course.start_timestamp:
             return False
@@ -53,20 +54,33 @@ class CourseSerializer(serializers.ModelSerializer):
 
     def get_color(self, course):
         user = self.context.get('request').user
-        logger.warning(f'User: {user}')
+        logger.info(f'User: {user}')
+
+        red = "#dc3545"
+        yellow = "#ffc107"
+        green = "#198754"
 
         try:
-            percentage = len(Attendance.objects.filter(course = course, student = user))/len(CourseWindowRecord.objects.filter(course = course))*100
-        except:
+            marked_attendance_count = len(
+                Attendance.objects.filter(course=course, student=user))
+
+            total_attendance_count = len(
+                CourseWindowRecord.objects.filter(course=course))
+
+            percentage = (marked_attendance_count/total_attendance_count)*100
+
+        except Exception as e:
+            logger.warning(f'Error {e} calculating attendance percentage.')
             percentage = 100
+
         color = None
-        if percentage < 75:
-            color = "#dc3545"
-        elif 75 < percentage < 80:
-            color = "#ffc107"
+
+        if percentage <= 75:
+            color = red
+        elif 75 < percentage <= 80:
+            color = yellow
         else:
-            color = "#198754"
-        attendance[course.course_code + course.section] = color
+            color = green
 
         return color
 
@@ -82,7 +96,7 @@ class CourseSerializer(serializers.ModelSerializer):
 
         return course
 
-    #TODO move into signals
+    # TODO move into signals
     def update(self, instance, validated_data):
 
         validated_start_timestamp = validated_data.get(

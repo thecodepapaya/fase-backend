@@ -27,7 +27,7 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = True
 
 ALLOWED_HOSTS = ['192.168.1.8', '192.168.1.7',
-                 '127.0.0.1', 'localhost', '0.0.0.0', 'fase.thecodepapaya.dev']
+                 '127.0.0.1', 'localhost', '0.0.0.0', 'fase.thecodepapaya.dev', '192.168.1.11']
 
 
 # Application definition
@@ -99,20 +99,19 @@ WSGI_APPLICATION = 'fase_backend.wsgi.application'
 #     }
 # }
 
-DATABASES = {  
-    'default': {  
-        'ENGINE': 'django.db.backends.mysql',  
-        'NAME': 'fase',  
-        'USER': 'ashutosh',  
-        'PASSWORD': 'zxcvbnm',  
-        'HOST': '127.0.0.1',  
-        'PORT': '3306',  
-        'OPTIONS': {  
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"  
-        }  
-    }  
-}  
-
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'fase',
+        'USER': 'ashutosh',
+        'PASSWORD': 'zxcvbnm',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
+        }
+    }
+}
 
 
 # Password validation
@@ -167,4 +166,4 @@ EMAIL = config('EMAIL')
 PASSWORD = config('PASSWORD')
 
 CSRF_TRUSTED_ORIGINS = ['https://fase.thecodepapaya.dev',
-                        'http://localhost:8000', 'http://0.0.0.0:8000']
+                        'http://localhost:8000', 'http://0.0.0.0:8000', 'https://192.168.1.11:8000']
