@@ -52,7 +52,7 @@ def _get_group(email):
 
     is_student = has_iiitv_domain and begins_with_number
 
-    group = student_group if is_student else None
+    group = student_group if is_student else student_group
 
     logger.info(f'Selected Group for new user {email}: {group}')
 
@@ -60,16 +60,14 @@ def _get_group(email):
 
 
 def assign_user_group(user):
+    student_group = Group.objects.get(name='Student')
     already_has_group = user.groups.count() != 0
 
     if already_has_group:
         logger.info(f'{user} already has groups {user.groups}, returning')
         return
 
-    group = _get_group(user.pk)
-
-    if group:
-        user.groups.add(group)
+    user.groups.add(student_group)
 
 
 def iiitv_email_validator(email):
