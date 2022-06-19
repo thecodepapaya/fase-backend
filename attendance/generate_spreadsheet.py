@@ -111,3 +111,4 @@ def _populate_student_names_and_attendance_columns(students, attendance_windows,
         column += 1
 
     worksheet.set_column(0, 0, 35)
+    worksheet.set_column(1, 30, 16)

@@ -61,16 +61,16 @@ class CourseSerializer(serializers.ModelSerializer):
         green = "#198754"
 
         try:
-            marked_attendance_count = len(
-                Attendance.objects.filter(course=course, student=user))
+            marked_attendance_count = Attendance.objects.filter(
+                course=course, student=user).count()
 
-            total_attendance_count = len(
-                CourseWindowRecord.objects.filter(course=course))
+            total_attendance_count = CourseWindowRecord.objects.filter(
+                course=course).count()
 
             percentage = (marked_attendance_count/total_attendance_count)*100
 
         except Exception as e:
-            logger.warning(f'Error {e} calculating attendance percentage.')
+            logger.warning(f'Error {e} calculating attendance percentage. Defaulting to 100.')
             percentage = 100
 
         color = None
