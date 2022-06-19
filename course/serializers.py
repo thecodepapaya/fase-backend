@@ -7,6 +7,7 @@ from rest_framework import serializers
 from users.serializers import UserSerializer
 
 from course.models import Course, CourseWindowRecord
+from attendance.models import Attendance
 
 logger = logging.getLogger(__file__)
 
@@ -28,6 +29,7 @@ class CourseSerializer(serializers.ModelSerializer):
             'start_timestamp',
             'attendance_duration_in_minutes',
             'is_already_marked',
+            'color'
         )
 
     def get_is_already_marked(self, course):
@@ -48,6 +50,25 @@ class CourseSerializer(serializers.ModelSerializer):
             return False
 
         return True
+
+    def get_color(self, course):
+        user = self.context.get('request').user
+        logger.warning(f'User: {user}')
+
+        try:
+            percentage = len(Attendance.objects.filter(course = course, student = user))/len(CourseWindowRecord.objects.filter(course = course))*100
+        except:
+            percentage = 100
+        color = None
+        if percentage < 75:
+            color = "#dc3545"
+        elif 75 < percentage < 80:
+            color = "#ffc107"
+        else:
+            color = "#198754"
+        attendance[course.course_code + course.section] = color
+
+        return color
 
     def create(self, validated_data):
         user = self.context['request'].user
