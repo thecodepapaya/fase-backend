@@ -32,7 +32,7 @@ class User(AbstractUser):
     objects = UserManager()
 
     class Meta:
-        ordering = ['-institute_email']
+        ordering = ['institute_email']
 
 
     @property
